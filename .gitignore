@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+*.json
+pdf_faiss2_index/*
+zendesk_faiss2_index/*
+.ruff_cache
+.vscode
+.key
+zendesk_tix_fixed.json
+zenesk_chatlog.txt
+zendesk_faiss2_index
+gpt-4-turbozendesk_faiss2_index
+gpt-4-turbo_new_zendesk_faiss2_index
