@@ -31,8 +31,6 @@ myurl = 'https://www.zimmelman.org'
 
 # OPENAI_MODEL = 'gpt-3.5-turbo-0125'
 OPENAI_MODEL = 'gpt-4o-mini'
-# OPENAI_MODEL = 'gpt-4-turbo'
-
 # exit(0)
 #initialize the LLM we'll use
 openai_llm_chat = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model=OPENAI_MODEL)
