@@ -375,7 +375,8 @@ def create_json_vector_db():
 
 
 
-def do_json_conversation_with_metadata(urgent_count:int=0, tix_count:int=0):
+# def do_json_conversation_with_metadata(urgent_count:int=0, tix_count:int=0):
+def do_json_conversation_with_metadata():
     # docs = load_json('./zendesk_tix_reallyfixed.json')
     # split_docs = split_json_list(documents=docs)
     # create_vector_db_for_json(split_docs)
@@ -413,11 +414,11 @@ def main():
     #     _.page_content = f"Ticket Number {i+1} : " +  _.metadata['source'] + " "  + _.page_content
     # new_create_vector_db_for_json(documents=d)
 
-    info = old_load_json('zendesk_tix_reallyfixed.json')
-    info = [json.loads(_) for _ in info if _]
-    urgent = len([_ for _ in info if _['priority'] == 'urgent'])
-    print(f"{urgent=}")
-    do_json_conversation_with_metadata(urgent_count=urgent, tix_count=len(info))
+    # info = old_load_json('zendesk_tix_reallyfixed.json')
+    # info = [json.loads(_) for _ in info if _]
+    # urgent = len([_ for _ in info if _['priority'] == 'urgent'])
+    # print(f"{urgent=}")
+    do_json_conversation_with_metadata()
 
 
 
