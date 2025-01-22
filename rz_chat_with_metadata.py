@@ -269,8 +269,6 @@ def get_retriever_with_history(retriever, llm):
     generate a new standalone question \
     that can be understood without the chat history. Do NOT answer the question, \
     just reformulate it if needed or otherwise return it as is.
-    
-    
     """
 
     prompt = ChatPromptTemplate.from_messages(
