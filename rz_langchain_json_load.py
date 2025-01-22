@@ -31,7 +31,8 @@ myurl = 'https://www.zimmelman.org'
 
 # OPENAI_MODEL = 'gpt-3.5-turbo-0125'
 # OPENAI_MODEL = 'gpt-4o-mini'
-OPENAI_MODEL = 'gpt-4-turbo'
+OPENAI_MODEL = 'gpt-4o'
+# OPENAI_MODEL = 'o1-mini'
 
 # exit(0)
 #initialize the LLM we'll use
@@ -51,7 +52,7 @@ CHAT_MODEL = openai_llm_chat
 
 
 def zendesk_metadata_func(record: dict, metadata: dict) -> dict:
-    metadata = {'assignee': 'None', 'requester': 'None', 'submitter': 'None'}
+    # metadata = {'assignee': 'None', 'requester': 'None', 'submitter': 'None'}
     try:
         assignee = record.get("assignee")['email'] if record and 'assignee' in record.keys() else 'None'
         metadata["assignee"] = assignee
@@ -68,7 +69,8 @@ def zendesk_metadata_func(record: dict, metadata: dict) -> dict:
     except Exception as e:
         print(f'exception {e} getting submitter for record')
         # pp(record)
-    metadata['source'] = record['plain_body'] + " " + assignee + " " + requester + " " +submitter # replace source with good stuff
+    # metadata['source'] = record['plain_body'] + " " + assignee + " " + requester + " " + submitter
+    metadata['zendesk_info'] = record['plain_body'] + " " + assignee + " " + requester + " " + submitter # add some good stuff
     return metadata
 
 
@@ -76,8 +78,10 @@ def new_load_json_with_metadata(file_path: str):
     loader = JSONLoader(
     file_path=file_path,
     jq_schema='.comments[]',
+    # jq_schema='.[]',
     is_content_key_jq_parsable=False,
     content_key='body',
+    # content_key='subject',
     text_content=True,
     metadata_func=zendesk_metadata_func,
     json_lines=True)
@@ -92,11 +96,6 @@ def old_load_json(file_path: str):
         data = ifile.read().split('\n')
         for d in data:
             if d:
-                # print(type(d))
-                # js = d
-                
-                # d.rstrip(",")
-                # print(d[23441:23450])
                 try:
                     js = json.loads(d)
                 except Exception as e:
@@ -332,7 +331,7 @@ def get_rag_chain_for_json(retriever_with_history):
     Use a lengthy technical explaination if it is appropriate. \
     If the user asks you for a list, include all items that match in the list. \
     If the user asks what you know about, tell them you know about Zendesk Tickets. \
-    {context}"""
+    {context} """
 
     qa_prompt = ChatPromptTemplate.from_messages(
         [

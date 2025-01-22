@@ -30,8 +30,8 @@ myurl = 'https://www.zimmelman.org'
 
 
 # OPENAI_MODEL = 'gpt-3.5-turbo-0125'
-# OPENAI_MODEL = 'gpt-4o-mini'
-OPENAI_MODEL = 'gpt-4-turbo'
+OPENAI_MODEL = 'gpt-4o-mini'
+# OPENAI_MODEL = 'gpt-4-turbo'
 
 # exit(0)
 #initialize the LLM we'll use
@@ -88,15 +88,11 @@ def new_load_json_with_metadata(file_path: str):
 
 def old_load_json(file_path: str):
     summaries = ""
-    with open('./zendesk_tix_fixed.json') as ifile:
+    with open('./zendesk_tix_reallyfixed.json') as ifile:
         data = ifile.read().split('\n')
+        return data
         for d in data:
             if d:
-                # print(type(d))
-                # js = d
-                
-                # d.rstrip(",")
-                # print(d[23441:23450])
                 try:
                     js = json.loads(d)
                 except Exception as e:
@@ -330,8 +326,11 @@ def get_rag_chain_for_json(retriever_with_history):
     Use the following pieces of retrieved context to answer the question. \
     If you don't know the answer, just say that you don't know. \
     Use a lengthy technical explaination if it is appropriate. \
-    If the user asks you for a list, include all items that match in the list. \
+    If the user asks you for a list, always include all items that match in the list. \
+    If the user asks for a list of items, include 100 items when possible. \
     If the user asks what you know about, tell them you know about Zendesk Tickets. \
+    If the user asks how many tickets there are, tell them there are 6973 Zendesk Tickets. \
+    If the user asks how many urgent tickets there are, tell them there are 48 Urgent Tickets. \
     {context}"""
 
     qa_prompt = ChatPromptTemplate.from_messages(
@@ -355,18 +354,18 @@ def ask_question(rag_chain, question=None):
     print("\n\n", ai_msg_1["answer"])
 
 
-def do_pdf_conversation():
-    # docs = load_pdf_documents()
-    # split_docs = split_character_text(documents=docs)
-    # res = create_vector_db_for_pdf(split_docs)
-    # pp(res)
-    my_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_pdf(), llm=openai_llm_chat)
-    my_rag_chain = get_rag_chain(retriever_with_history=my_retriever_with_history)
-    myq = ""
-    while myq != "bye":
-        myq = input("\n\nAsk me something about linux, bash or python  ....  ")
-        ask_question(rag_chain=my_rag_chain, question=myq)
-        # ask_question(rag_chain=my_rag_chain, question="are they cool?")
+# def do_pdf_conversation():
+#     # docs = load_pdf_documents()
+#     # split_docs = split_character_text(documents=docs)
+#     # res = create_vector_db_for_pdf(split_docs)
+#     # pp(res)
+#     my_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_pdf(), llm=openai_llm_chat)
+#     my_rag_chain = get_rag_chain(retriever_with_history=my_retriever_with_history)
+#     myq = ""
+#     while myq != "bye":
+#         myq = input("\n\nAsk me something about linux, bash or python  ....  ")
+#         ask_question(rag_chain=my_rag_chain, question=myq)
+#         # ask_question(rag_chain=my_rag_chain, question="are they cool?")
     
 
 def create_json_vector_db():
@@ -378,7 +377,7 @@ def create_json_vector_db():
 
 
 
-def do_json_conversation_with_metadata():
+def do_json_conversation_with_metadata(urgent_count:int=0, tix_count:int=0):
     # docs = load_json('./zendesk_tix_reallyfixed.json')
     # split_docs = split_json_list(documents=docs)
     # create_vector_db_for_json(split_docs)
@@ -416,8 +415,11 @@ def main():
     #     _.page_content = f"Ticket Number {i+1} : " +  _.metadata['source'] + " "  + _.page_content
     # new_create_vector_db_for_json(documents=d)
 
-
-    do_json_conversation_with_metadata()
+    info = old_load_json('zendesk_tix_reallyfixed.json')
+    info = [json.loads(_) for _ in info if _]
+    urgent = len([_ for _ in info if _['priority'] == 'urgent'])
+    print(f"{urgent=}")
+    do_json_conversation_with_metadata(urgent_count=urgent, tix_count=len(info))
 
 
 
