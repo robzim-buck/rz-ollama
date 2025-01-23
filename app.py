@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from rz_chat import get_rag_chain_for_pdf, ask_question, get_rag_chain_for_json, \
     get_retriever_with_history, get_vector_db_retriever_for_json, \
     openai_llm, get_vector_db_retriever_for_pdf
-import json2html
+# import json2html
 
 
 
@@ -29,8 +29,8 @@ def index():
 def chat():
     message = request.form['msg']
     result = ask_question(rag_chain=json_chain, question=message)
-    return json2html.json2html.convert(json = result)
-    # return result
+    # return json2html.json2html.convert(json = result)
+    return result
 
 
 if __name__ == '__main__':
