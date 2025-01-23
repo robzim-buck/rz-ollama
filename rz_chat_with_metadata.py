@@ -266,7 +266,7 @@ def get_retriever_with_history(retriever, llm):
     system_prompt = """Given the chat history and a recent user question \
     generate a new standalone question \
     that can be understood without the chat history. Do NOT answer the question, \
-    just reformulate it if needed or otherwise return it as is.
+    just reformulate it if needed or otherwise return it as is. \
     """
 
     prompt = ChatPromptTemplate.from_messages(
@@ -327,6 +327,9 @@ def get_rag_chain_for_json(retriever_with_history):
     If the user asks what you know about, tell them you know about Zendesk Tickets. \
     If the user asks how many tickets there are, tell them there are 6973 Zendesk Tickets. \
     If the user asks how many urgent tickets there are, tell them there are 48 Urgent Tickets. \
+    Think step by step.  If the user asks for a list, always include all items that match in the list. \
+    If the user asks for a mathematical result other than the number of zendesk tickets or urgent tickets, create a variable to count the items, then step by step, report the result.
+
     {context}"""
 
     qa_prompt = ChatPromptTemplate.from_messages(
