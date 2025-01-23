@@ -1,12 +1,17 @@
 from flask import Flask, render_template, request
-from rz_chat import get_rag_chain_for_pdf, ask_question, get_rag_chain_for_json, \
-    get_retriever_with_history, get_vector_db_retriever_for_json, \
-    openai_llm, get_vector_db_retriever_for_pdf
+# from rz_chat import get_rag_chain_for_pdf, ask_question, get_rag_chain_for_json, \
+#     get_retriever_with_history, get_vector_db_retriever_for_json, \
+#     openai_llm, get_vector_db_retriever_for_pdf
 # import json2html
 
 
+from rz_chat_with_metadata import ask_question, get_rag_chain_for_json, \
+    get_retriever_with_history, get_vector_db_retriever_for_json, \
+    openai_llm_chat
 
-my_json_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_json(), llm=openai_llm)
+
+
+my_json_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_json(), llm=openai_llm_chat)
 # my_pdf_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_pdf(), llm=openai_llm)
 
 # pdf_chain = get_rag_chain_for_pdf(retriever_with_history=my_pdf_retriever_with_history)

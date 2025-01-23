@@ -351,6 +351,9 @@ def ask_question(rag_chain, question=None):
     ai_msg_1 = rag_chain.invoke({"input": question, "chat_history": chat_history})
     chat_history.extend([HumanMessage(content=question), ai_msg_1["answer"]])
     print("\n\n", ai_msg_1["answer"])
+    return ai_msg_1["answer"]
+
+
 
 
 # def do_pdf_conversation():
