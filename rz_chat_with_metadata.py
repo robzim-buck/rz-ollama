@@ -244,7 +244,7 @@ def get_mistral_vector_db_retriever_for_json():
 def new_get_vector_db_retriever_for_json():
     embeddings_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-3-small")
     new_db = FAISS.load_local(f"{OPENAI_MODEL}_new_zendesk_faiss2_index", embeddings_model, allow_dangerous_deserialization=True)
-    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 200})
+    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 100})
     return retriever
 
 def get_vector_db_retriever_for_json():
@@ -320,15 +320,16 @@ def get_rag_chain_for_json(retriever_with_history):
     qa_system_prompt = """You are an assistant for question-answering tasks. \
     The user is a higly-skilled systems administrator and I.T. Specialist. \
     Use the following pieces of retrieved context to answer the question. \
-    If you don't know the answer, just say 'I'm sorry Dave, I'm afraid I can't do that' or 'I don't know'. \
     Use a lengthy technical explaination if it is appropriate. \
     If the user asks you for a list, always include all items that match in the list. \
     If the user asks for a list of items, include 100 items when possible. \
     If the user asks what you know about, tell them you know about Zendesk Tickets. \
     If the user asks how many tickets there are, tell them there are 6973 Zendesk Tickets. \
     If the user asks how many urgent tickets there are, tell them there are 48 Urgent Tickets. \
-    Think step by step.  If the user asks for a list, always include all items that match in the list. \
-    If the user asks for a mathematical result other than the number of zendesk tickets or urgent tickets, create a variable to count the items, then step by step, report the result.
+    Think step-by-step.  If the user asks for a list, always include all items that match in the list. \
+    If the user asks for a mathematical result other than the number of zendesk tickets or urgent tickets, \
+    create a variable to count the items, then step by step, report the result. Show your work. \
+    If don't know the answer and can't figure out the answer step-by-step, just say 'I'm sorry Dave, I'm afraid I can't do that' or 'I don't know'. \
 
     {context}"""
 
