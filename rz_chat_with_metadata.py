@@ -244,7 +244,7 @@ def get_mistral_vector_db_retriever_for_json():
 def new_get_vector_db_retriever_for_json():
     embeddings_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-3-small")
     new_db = FAISS.load_local(f"{OPENAI_MODEL}_new_zendesk_faiss2_index", embeddings_model, allow_dangerous_deserialization=True)
-    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 20})
+    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 200})
     return retriever
 
 def get_vector_db_retriever_for_json():
