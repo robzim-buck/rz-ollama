@@ -5,13 +5,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Chatbot</title>
+		<title>Buck Zendesk Ticket Bot</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
 	</head>
-	
 	
 	<body>
 		<div class="container-fluid h-100">
@@ -21,12 +20,12 @@
 						<div class="card-header msg_head">
 							<div class="d-flex bd-highlight">
 								<div class="img_cont">
-									<img src="{{ url_for('static', filename='logo.jpeg')}}" class="rounded-circle user_img">
+									<img src="{{ url_for('static', filename='whats_my_purpose.png')}}" class="rounded-circle user_img">
 									<span class="online_icon"></span>
 								</div>
 								<div class="user_info">
-									<span>ChatBot</span>
-									<p>Ask me anything!</p>
+									<span>Buck Zendesk Bot</span>
+									<p>Ask me about Zendesk Tickets!</p>
 								</div>
 							</div>
 						</div>
@@ -36,7 +35,7 @@
 						<div class="loading"><div id="loading" class="loader" ></div></div>
 						<div class="card-footer">
 							<form id="messageArea" class="input-group">
-                                <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
+                                <input type="text" id="text" name="msg" placeholder="Ask me about Zendesk ..." autocomplete="off" class="form-control type_msg" required/>
 								<div class="input-group-append">
 									<button type="submit" id="send" class="input-group-text send_btn" onclick="loading()"><i class="fas fa-location-arrow"></i></button>
 								</div>

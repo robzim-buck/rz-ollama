@@ -30,9 +30,7 @@ myurl = 'https://www.zimmelman.org'
 
 
 # OPENAI_MODEL = 'gpt-3.5-turbo-0125'
-# OPENAI_MODEL = 'gpt-4o-mini'
-OPENAI_MODEL = 'gpt-4-turbo'
-
+OPENAI_MODEL = 'gpt-4o'
 # exit(0)
 #initialize the LLM we'll use
 openai_llm_chat = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model=OPENAI_MODEL)
@@ -88,15 +86,11 @@ def new_load_json_with_metadata(file_path: str):
 
 def old_load_json(file_path: str):
     summaries = ""
-    with open('./zendesk_tix_fixed.json') as ifile:
+    with open('./zendesk_tix_reallyfixed.json') as ifile:
         data = ifile.read().split('\n')
+        return data
         for d in data:
             if d:
-                # print(type(d))
-                # js = d
-                
-                # d.rstrip(",")
-                # print(d[23441:23450])
                 try:
                     js = json.loads(d)
                 except Exception as e:
@@ -250,7 +244,7 @@ def get_mistral_vector_db_retriever_for_json():
 def new_get_vector_db_retriever_for_json():
     embeddings_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-3-small")
     new_db = FAISS.load_local(f"{OPENAI_MODEL}_new_zendesk_faiss2_index", embeddings_model, allow_dangerous_deserialization=True)
-    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 20})
+    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 100})
     return retriever
 
 def get_vector_db_retriever_for_json():
@@ -272,9 +266,7 @@ def get_retriever_with_history(retriever, llm):
     system_prompt = """Given the chat history and a recent user question \
     generate a new standalone question \
     that can be understood without the chat history. Do NOT answer the question, \
-    just reformulate it if needed or otherwise return it as is.
-    
-    
+    just reformulate it if needed or otherwise return it as is. \
     """
 
     prompt = ChatPromptTemplate.from_messages(
@@ -328,10 +320,17 @@ def get_rag_chain_for_json(retriever_with_history):
     qa_system_prompt = """You are an assistant for question-answering tasks. \
     The user is a higly-skilled systems administrator and I.T. Specialist. \
     Use the following pieces of retrieved context to answer the question. \
-    If you don't know the answer, just say that you don't know. \
     Use a lengthy technical explaination if it is appropriate. \
-    If the user asks you for a list, include all items that match in the list. \
+    If the user asks you for a list, always include all items that match in the list. \
+    If the user asks for a list of items, include 100 items when possible. \
     If the user asks what you know about, tell them you know about Zendesk Tickets. \
+    If the user asks how many tickets there are, tell them there are 6973 Zendesk Tickets. \
+    If the user asks how many urgent tickets there are, tell them there are 48 Urgent Tickets. \
+    Think step-by-step.  If the user asks for a list, always include all items that match in the list. \
+    If the user asks for a mathematical result other than the number of zendesk tickets or urgent tickets, \
+    create a variable to count the items, then step by step, report the result. Show your work. \
+    If don't know the answer and can't figure out the answer step-by-step, just say 'I'm sorry Dave, I'm afraid I can't do that' or 'I don't know'. \
+
     {context}"""
 
     qa_prompt = ChatPromptTemplate.from_messages(
@@ -353,20 +352,23 @@ def ask_question(rag_chain, question=None):
     ai_msg_1 = rag_chain.invoke({"input": question, "chat_history": chat_history})
     chat_history.extend([HumanMessage(content=question), ai_msg_1["answer"]])
     print("\n\n", ai_msg_1["answer"])
+    return ai_msg_1["answer"]
 
 
-def do_pdf_conversation():
-    # docs = load_pdf_documents()
-    # split_docs = split_character_text(documents=docs)
-    # res = create_vector_db_for_pdf(split_docs)
-    # pp(res)
-    my_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_pdf(), llm=openai_llm_chat)
-    my_rag_chain = get_rag_chain(retriever_with_history=my_retriever_with_history)
-    myq = ""
-    while myq != "bye":
-        myq = input("\n\nAsk me something about linux, bash or python  ....  ")
-        ask_question(rag_chain=my_rag_chain, question=myq)
-        # ask_question(rag_chain=my_rag_chain, question="are they cool?")
+
+
+# def do_pdf_conversation():
+#     # docs = load_pdf_documents()
+#     # split_docs = split_character_text(documents=docs)
+#     # res = create_vector_db_for_pdf(split_docs)
+#     # pp(res)
+#     my_retriever_with_history = get_retriever_with_history(retriever=get_vector_db_retriever_for_pdf(), llm=openai_llm_chat)
+#     my_rag_chain = get_rag_chain(retriever_with_history=my_retriever_with_history)
+#     myq = ""
+#     while myq != "bye":
+#         myq = input("\n\nAsk me something about linux, bash or python  ....  ")
+#         ask_question(rag_chain=my_rag_chain, question=myq)
+#         # ask_question(rag_chain=my_rag_chain, question="are they cool?")
     
 
 def create_json_vector_db():
@@ -378,6 +380,7 @@ def create_json_vector_db():
 
 
 
+# def do_json_conversation_with_metadata(urgent_count:int=0, tix_count:int=0):
 def do_json_conversation_with_metadata():
     # docs = load_json('./zendesk_tix_reallyfixed.json')
     # split_docs = split_json_list(documents=docs)
@@ -416,7 +419,10 @@ def main():
     #     _.page_content = f"Ticket Number {i+1} : " +  _.metadata['source'] + " "  + _.page_content
     # new_create_vector_db_for_json(documents=d)
 
-
+    # info = old_load_json('zendesk_tix_reallyfixed.json')
+    # info = [json.loads(_) for _ in info if _]
+    # urgent = len([_ for _ in info if _['priority'] == 'urgent'])
+    # print(f"{urgent=}")
     do_json_conversation_with_metadata()
 
 
