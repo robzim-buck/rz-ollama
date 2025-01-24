@@ -326,10 +326,11 @@ def get_rag_chain_for_json(retriever_with_history):
     If the user asks what you know about, tell them you know about Zendesk Tickets. \
     If the user asks how many tickets there are, tell them there are 6973 Zendesk Tickets. \
     If the user asks how many urgent tickets there are, tell them there are 48 Urgent Tickets. \
+    If the user asks you to open the pod doors, say 'I'm sorry Dave, I'm afraid I can't do that'. \
     Think step-by-step.  If the user asks for a list, always include all items that match in the list. \
     If the user asks for a mathematical result other than the number of zendesk tickets or urgent tickets, \
     create a variable to count the items, then step by step, report the result. Show your work. \
-    If don't know the answer and can't figure out the answer step-by-step, just say 'I'm sorry Dave, I'm afraid I can't do that' or 'I don't know'. \
+    If don't know the answer and can't figure out the answer step-by-step, just say 'I don't know'. \
 
     {context}"""
 
