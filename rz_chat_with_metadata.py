@@ -4,6 +4,7 @@ from langchain_openai import OpenAIEmbeddings
 # from langchain.schema.document import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter, TextSplitter, RecursiveJsonSplitter
 from langchain_openai import ChatOpenAI
+
 from pathlib import Path
 
 from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
@@ -35,9 +36,12 @@ OPENAI_MODEL = 'gpt-4o'
 #initialize the LLM we'll use
 openai_llm_chat = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model=OPENAI_MODEL)
 
+
+
+
+
 # initi the mistral model
 mistral_ai_chat = ChatMistralAI(model="mistral-large-latest", api_key=DOTENV['MISTRAL_KEY'])
-
 my_mistral_client = Mistral(api_key=DOTENV['MISTRAL_KEY'])
 
 # OPENAI_MODEL = 'gpt-3.5-turbo-0125'
@@ -244,8 +248,17 @@ def get_mistral_vector_db_retriever_for_json():
 def new_get_vector_db_retriever_for_json():
     embeddings_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-3-small")
     new_db = FAISS.load_local(f"{OPENAI_MODEL}_new_zendesk_faiss2_index", embeddings_model, allow_dangerous_deserialization=True)
-    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 50})
+    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 100})
     return retriever
+
+
+def newer_get_vector_db_retriever_for_json():
+    embeddings_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-3-small")
+    new_db = FAISS.load_local(f"{OPENAI_MODEL}_new_zendesk_faiss2_index", embeddings_model, allow_dangerous_deserialization=True)
+    retriever = new_db.as_retriever(search_type="similarity", search_kwargs={"k": 500})
+    return retriever
+
+
 
 def get_vector_db_retriever_for_json():
     embeddings_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY, model="text-embedding-3-small")
@@ -383,10 +396,11 @@ def create_json_vector_db():
 
 # def do_json_conversation_with_metadata(urgent_count:int=0, tix_count:int=0):
 def do_json_conversation_with_metadata():
-    # docs = load_json('./zendesk_tix_reallyfixed.json')
+    # docs = new_load_json_with_metadata('./zendesk_tix_reallyfixed.json')
     # split_docs = split_json_list(documents=docs)
     # create_vector_db_for_json(split_docs)
-    my_retriever_with_history = get_retriever_with_history(retriever=new_get_vector_db_retriever_for_json(), llm=openai_llm_chat)
+    # my_retriever_with_history = get_retriever_with_history(retriever=new_get_vector_db_retriever_for_json(), llm=openai_llm_chat)
+    my_retriever_with_history = get_retriever_with_history(retriever=newer_get_vector_db_retriever_for_json(), llm=openai_llm_chat)
     my_rag_chain = get_rag_chain_for_json(retriever_with_history=my_retriever_with_history)
     myq = ''
     while myq != 'bye':
